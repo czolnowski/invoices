@@ -1,0 +1,13 @@
+#!/usr/bin/php
+<?php
+
+  require_once 'number_to_string_class.php';
+  
+  $numbers = array();
+  $amount = 10;
+  for( $i = 0; $i < $amount; ++$i ) {
+    
+    $number = ( mt_rand() * mt_rand()) / ( mt_rand() + mt_rand());
+    print $number . "\t" . NumberToString::parseNumber( $number ) . "\n";
+    
+  }

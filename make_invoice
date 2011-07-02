@@ -1,0 +1,73 @@
+#!/usr/bin/php
+<?php
+
+  require_once 'models/StdInvoice.php';
+
+  $sides = array(
+    array(
+      'name' => 'Jan Nowak', 'address' => 'Nowowiejska 12', 'city' => 'Wrocław',
+      'zip' => '83-934', 'nip' => '876 541 33', 'phone' => '+48 889 993 534',
+      'fax' => '+48 54 87893787', 'bank_account' => '46 8475 9900 0000 1110 1748 8234',
+      'sign' => 'Jan Nowak'
+    ), array(
+      'name' => 'Wiesław Kowalczyk', 'address' => 'Reja 22/33', 'city' => 'Wrocław',
+      'zip' => '96-984', 'nip' => '876 541 33', 'phone' => '+48 764 837 647',
+      'fax' => '+48 54 8746387', 'bank_account' => '46 8475 9900 0000 1110 1748 8234',
+      'sign' => 'mgr inż. Wiesław Kowalczyk'
+    ), array(
+      'name' => 'Andrzej Zieliński', 'address' => 'Partyzantów 11a/2', 'city' => 'Wrocław',
+      'zip' => '22-384', 'nip' => '876 541 33', 'phone' => '+48 764 837 647',
+      'fax' => '+48 54 8746387', 'bank_account' => '46 8475 9900 0000 1110 1748 8234',
+      'sign' => 'Andrzej Zieliński'
+    ), array(
+      'name' => 'Anna Woźniak "Usługi przewozowe"', 'address' => 'Piastowska 87a', 'city' => 'Wrocław',
+      'zip' => '00-993', 'nip' => '876 541 33', 'phone' => '+48 764 837 647',
+      'fax' => '+48 54 8746387', 'bank_account' => '46 8475 9900 0000 1110 1748 8234',
+      'sign' => 'Anna Woźniak'
+    )
+  );
+  
+  $serviceNames = array(
+    'Usługa transportu', 'Wynajem pracownikow', 'Wynajem sprzetu budowalnego',
+    'Utworzenie wizerunku firmy', 'Utworzenie strony WWW', 'Napisanie oprogramowania na serwer',
+    'Usługa przewozowa', 'Udostepnienie powierzchni biurowych', 'Usługa sprzątania'
+  );
+  
+  for( $e=0;$e<10;++$e){
+  
+  $invoice = new StdInvoice();
+  
+  $invoice -> number = mt_rand( 200, 600 );
+  $invoice -> issuePlace = 'Wrocław';
+  $day = mt_rand( -3, 3 );
+  $invoice -> issueDate = $day . ' day';
+  $invoice -> paymentDate = $day + 3 . ' day';
+  $invoice -> salesDate = $invoice -> issueDate;
+  
+  $sellerId = mt_rand( 0, sizeof( $sides ) - 1 );
+  $tmp = $sides[ 0 ];
+  $sides[ 0 ] = $sides[ $sellerId ];
+  $sides[ $sellerId ] = $tmp;
+  
+  $invoice -> seller = new InvoiceSide( $sides[ 0 ]);
+  $invoice -> buyer = new InvoiceSide( $sides[ mt_rand( 1, sizeof( $sides ) - 1 )]);
+  
+  $servicesAmount = mt_rand( 5, 30 );
+  
+  for($i=0;$i<$servicesAmount;++$i){
+  
+    $service = new InvoiceElement;
+    $service -> name = $serviceNames[ mt_rand( 0, sizeof( $serviceNames ) - 1 )];
+    $service -> date = mt_rand( -100, -5 ) . 'day';
+    $service -> amount = mt_rand( 1, 20 );
+    $service -> price = mt_rand( 1000, 60000)/100;
+    
+    $invoice -> services = $service;
+    
+  }
+      
+    $invoice -> services = $service;
+    
+    Invoice::save( $invoice, 'invoices/invoice_' . ($e < 9?'0': '') . ($e+1) . '.inv' );
+
+  }
